@@ -58,6 +58,7 @@
 		<module>simple-rest-service</module>
 		<module>simple-spring-mvc</module>
 		<module>simple-spring-mvc-war</module>
+		<module>simple-consuming-rest</module>
 	</modules>
 </project>
 
