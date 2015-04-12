@@ -7,28 +7,9 @@
 	<packaging>pom</packaging>
 	<name>Spring Tutorials</name>
 
-    <properties>
-        <java.version>1.7</java.version>
-        <!-- use UTF-8 for everything -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
-	<repositories>
-		<repository>
-			<id>spring-releases</id>
-			<url>https://repo.spring.io/libs-release</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-releases</id>
-			<url>https://repo.spring.io/libs-release</url>
-		</pluginRepository>
-	</pluginRepositories>
-	
 	<modules>
 		<module>spring-boot</module>
+		<module>spring-io</module>
 	</modules>
 </project>
 
