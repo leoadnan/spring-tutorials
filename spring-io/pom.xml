@@ -79,5 +79,6 @@
 		<module>spring-io-mapreduce-workflow</module>
 		<module>spring-io-simple-hive</module>
 		<module>spring-io-mapreduce-scheduling</module>
+		<module>spring-io-hive-jdbc-template</module>
 	</modules>
 </project>
