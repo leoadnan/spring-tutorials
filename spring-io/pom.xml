@@ -78,5 +78,6 @@
 		<module>tweets-count-mapreduce</module>
 		<module>spring-io-mapreduce-workflow</module>
 		<module>spring-io-simple-hive</module>
+		<module>spring-io-mapreduce-scheduling</module>
 	</modules>
 </project>
