@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import entity.Product;
 
-@Component
+//@Component
 public interface ProductService{
 
 	public void save(Product entity);

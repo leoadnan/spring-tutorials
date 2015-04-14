@@ -17,4 +17,7 @@ public interface SampleRepository extends CassandraRepository<SampleEntity> {
 
     @Query("SELECT * FROM sample WHERE name = ?0")
     public List<SampleEntity> findByName(String testName);
+    
+    @Query("select count(*) from sample where name=?0 allow filtering")
+    Long countByName(String name);
 }

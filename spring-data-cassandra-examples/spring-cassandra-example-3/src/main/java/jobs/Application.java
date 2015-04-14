@@ -18,7 +18,7 @@ import entity.Product;
 
 @SpringBootApplication
 @ImportResource("META-INF/spring/application-context.xml")
-@ComponentScan(basePackages = {"service","dao"})
+//@ComponentScan(basePackages = {"service","dao"})
 public class Application implements CommandLineRunner{
 	
 	@Autowired

@@ -7,7 +7,6 @@ import org.springframework.cassandra.core.ConsistencyLevel;
 import org.springframework.cassandra.core.RetryPolicy;
 import org.springframework.cassandra.core.WriteOptions;
 import org.springframework.data.cassandra.core.CassandraOperations;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import repository.ProductRepository;

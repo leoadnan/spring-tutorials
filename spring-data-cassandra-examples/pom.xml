@@ -49,6 +49,12 @@
 			<artifactId>snappy-java</artifactId>
 			<version>1.1.1.6</version>
 		</dependency>
+		<dependency>
+			<groupId>net.jpountz.lz4</groupId>
+			<artifactId>lz4</artifactId>
+			<version>1.3.0</version>
+		</dependency>
+		
 		<!-- spring-data-cassandra-1.1.2 comes with driver version 2.0.4. if we need 2.1.5 enable below dependencies -->
 		<!-- <dependency>
 			<groupId>com.datastax.cassandra</groupId>

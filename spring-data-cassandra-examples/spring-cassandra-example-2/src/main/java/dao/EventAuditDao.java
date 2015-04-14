@@ -4,13 +4,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import entity.EventAudit;
 import entity.EventAuditKey;
 
-@Component
-interface EventAuditDao{
+public interface EventAuditDao{
 
 	public void save(EventAudit entity);
 

@@ -2,12 +2,8 @@ package dao;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
-
 import entity.Product;
 
-@Component
 public interface ProductDao{
 
 	public void save(Product entity);

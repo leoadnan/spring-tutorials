@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
@@ -33,7 +34,7 @@ public class AppConfig extends AbstractSessionConfiguration {
 
 
     @Bean
-    public CqlOperations cassandraTemplate() throws Exception {
+    public CassandraOperations cassandraTemplate() throws Exception {
         return new CassandraTemplate(session().getObject());
     }
 
