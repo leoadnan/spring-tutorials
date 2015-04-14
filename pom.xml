@@ -8,10 +8,10 @@
 	<name>Spring Tutorials</name>
 
 	<modules>
-		<module>spring-boot</module>
-		<module>spring-io</module>
+		<module>spring-boot-examples</module>
+		<module>spring-io-examples</module>
 
-		<module>spring-data-cassandra</module>
+		<module>spring-data-cassandra-examples</module>
 	</modules>
 </project>
 
