@@ -10,6 +10,8 @@
 	<modules>
 		<module>spring-boot</module>
 		<module>spring-io</module>
+
+		<module>spring-data-cassandra</module>
 	</modules>
 </project>
 
