@@ -23,15 +23,31 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
+			
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j</artifactId>
+			<exclusions>
+			<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+				</exclusions>	
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-cassandra</artifactId>
 			<!-- <version>${spring.cassandra.version}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial.snappy</groupId>
+			<artifactId>snappy-java</artifactId>
+			<version>1.1.1.6</version>
 		</dependency>
 		<!-- spring-data-cassandra-1.1.2 comes with driver version 2.0.4. if we need 2.1.5 enable below dependencies -->
 		<!-- <dependency>
@@ -44,6 +60,7 @@
 			<artifactId>cassandra-driver-dse</artifactId>
 			<version>2.1.5</version>
 		</dependency> -->
+		
 	</dependencies>
     
     <build>
@@ -72,5 +89,6 @@
 		<module>spring-cassandra-example-1</module>
 		<module>spring-cassandra-example-2</module>
 		<module>spring-cassandra-example-3</module>
+		<module>spring-cassandra-example-4</module>
 	</modules>
 </project>

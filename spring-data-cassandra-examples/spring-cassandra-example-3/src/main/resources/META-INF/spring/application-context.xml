@@ -11,13 +11,54 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
 		http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd">
 
-	<cassandra:mapping entity-base-packages="entity"/>
-	<cassandra:converter mapping-ref="cassandraMapping" />
-	<cassandra:template/>
-	<cassandra:cluster port="${cassandra.port}" contact-points="${cassandra.host}" />
+  	<!-- REQUIRED: The Cassandra Cluster -->
+	<cassandra:cluster port="${cassandra.port}" contact-points="${cassandra.host}" compression="SNAPPY" />
+	
+	<!-- REQUIRED: The Cassandra Session, built from the Cluster, and attaching to a keyspace -->
 	<cassandra:session keyspace-name="${keyspace.emmd}"  />
+
+  	<!-- REQUIRED: The Default Cassandra Mapping Context used by CassandraConverter -->
+	<cassandra:mapping entity-base-packages="entity"/>
+	
+	<!-- REQUIRED: The Default Cassandra Converter used by CassandraTemplate -->
+	<cassandra:converter mapping-ref="cassandraMapping" />
+	
+	<!-- REQUIRED: The Cassandra Template is the building block of all Spring Data Cassandra -->
+	<cassandra:template/>
+	
+	<!-- OPTIONAL: If you are using Spring Data Cassandra Repositories, add your base packages to scan here -->
 	<cassandra:repositories base-package="repository"/>
 	
 	<!-- <context:annotation-config /> -->
+	
+	<!--  
+	
+	<cassandra:cluster id="cassandra-cluster"
+		contactPoints="${cassandra.contactPoints}" port="${cassandra.port}"
+		compression="SNAPPY">
+		<cassandra:local-pooling-options
+			min-simultaneous-requests="25" max-simultaneous-requests="100"
+			core-connections="2" max-connections="8" />
+		<cassandra:remote-pooling-options
+			min-simultaneous-requests="25" max-simultaneous-requests="100"
+			core-connections="1" max-connections="2" />
+		<cassandra:socket-options
+			connect-timeout-mls="5000" keep-alive="true" reuse-address="true"
+			so-linger="60" tcp-no-delay="true" receive-buffer-size="65536"
+			send-buffer-size="65536" />
+	</cassandra:cluster>
+
+	<cassandra:mapping-converter id="cassandra-converter"/> -->
+
+	<!-- replication-strategy="NetworkTopologyStrategy" replication-factor="'dc1' : 1, 'dc2' : 1" -->
+	<!-- replication-strategy="SimpleStrategy" replication-factor="1" -->
+	<!-- <cassandra:session id="cassandra-session" keyspace="${cassandra.keyspace}">
+		<cassandra:keyspace-attributes action="update"	
+			replication-strategy="SimpleStrategy" replication-factor="1"
+			durable-writes="true">
+			<cassandra:table entity-class="" />
+		</cassandra:keyspace-attributes>
+	</cassandra:session>
+	 -->
 	
 </beans>
