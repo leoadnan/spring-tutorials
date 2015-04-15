@@ -96,5 +96,6 @@
 		<module>spring-cassandra-example-2</module>
 		<module>spring-cassandra-example-3</module>
 		<module>spring-cassandra-example-4</module>
+		<module>cassandra-sstableloader</module>
 	</modules>
 </project>

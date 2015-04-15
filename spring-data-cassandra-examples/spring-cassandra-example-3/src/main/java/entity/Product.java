@@ -12,7 +12,7 @@ public class Product {
 	private Long upcId;
 	
 	@Column(value="cat_id")
-	private Long catId;
+	private Integer catId;
 	
 	@Column(value="j4u_cat")
 	private String j4uCat;
@@ -23,11 +23,22 @@ public class Product {
 	public Product() {
 	}
 
-	public Product(Long upcId, Long catId, String j4uCat, String upcDsc) {
+	public Product(Long upcId, Integer catId, String j4uCat, String upcDsc) {
 		this.upcId = upcId;
 		this.catId = catId;
 		this.j4uCat = j4uCat;
 		this.upcDsc = upcDsc;
+	}
+
+	
+	public Product(Long upcId, String upcDsc) {
+		this.upcId = upcId;
+		this.upcDsc = upcDsc;
+	}
+
+	public Product(Long upcId) {
+		super();
+		this.upcId = upcId;
 	}
 
 	public Long getUpcId() {
@@ -38,11 +49,11 @@ public class Product {
 		this.upcId = upcId;
 	}
 
-	public Long getCatId() {
+	public Integer getCatId() {
 		return catId;
 	}
 
-	public void setCatId(Long catId) {
+	public void setCatId(Integer catId) {
 		this.catId = catId;
 	}
 

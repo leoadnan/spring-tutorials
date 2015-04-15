@@ -30,7 +30,7 @@ public class Application implements CommandLineRunner{
 	}
 	
 	public void run(String... strings){
-		productService.save(new Product(1L,1L,"j4uCat","upcDsc"));
+		productService.save(new Product(1L,1,"j4uCat","upcDsc"));
 		
 //		List<Product> products=new ArrayList<Product>();
 //		for(int i=1; i<=10; i++){

@@ -9,12 +9,22 @@
 		</encoder>
 	</appender>
 
+	<appender name="console2" class="ch.qos.logback.core.ConsoleAppender">
+	    <encoder>
+	      <pattern> %date{"HH:mm:ss,SSS"} [%-5level] %class{50}.%method[%line]: %message%n%xException{10}</pattern>
+	    </encoder>
+  	</appender>
+  	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	    <encoder>
+	      <pattern> %date{"HH:mm:ss,SSS"}\t[%-5level]\t%-50class{50}:\t%message%n%xException{10}</pattern>
+	    </encoder>
+  	</appender>
 	<logger name="org.springframework" level="info" />
-	<logger name="org.springframework.cassandra" level="info" />
-	<logger name="com.datastax" level="info" />
+	<logger name="org.springframework.cassandra" level="debug" />
+	<logger name="com.datastax" level="debug" />
 
 	<root level="info">
-		<appender-ref ref="console" />
+		<appender-ref ref="STDOUT" />
 	</root>
 
 </configuration>

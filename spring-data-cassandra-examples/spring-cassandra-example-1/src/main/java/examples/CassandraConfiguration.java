@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
 import org.springframework.data.cassandra.config.java.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.convert.CassandraConverter;
 import org.springframework.data.cassandra.convert.MappingCassandraConverter;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.CassandraTemplate;
@@ -36,8 +37,12 @@ public class CassandraConfiguration extends AbstractCassandraConfiguration {
     }
 
     @Bean
-    public CassandraMappingContext cassandraMapping() throws ClassNotFoundException {
+    public CassandraMappingContext cassandraMapping() {
         return new BasicCassandraMappingContext();
+    }
+    @Bean
+    public CassandraConverter converter() {
+      return new MappingCassandraConverter(cassandraMapping());
     }
     
     @Bean(name="cqlTemplate")
