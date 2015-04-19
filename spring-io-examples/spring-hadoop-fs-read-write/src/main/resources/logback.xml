@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<!-- pattern>%d %5p %40.40c:%4L - %m%n</pattern-->
+			<!-- <pattern>%d %5p | %t | %-55logger{55} | %m | %n</pattern> -->
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="console2" class="ch.qos.logback.core.ConsoleAppender">
+	    <encoder>
+	      <pattern> %date{"HH:mm:ss,SSS"} [%-5level] %class{50}.%method[%line]: %message%n%xException{10}</pattern>
+	    </encoder>
+  	</appender>
+  	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  		<withJansi>true</withJansi>
+	    <encoder>
+	      <pattern> %white(%d{yyyy-MM-dd HH:mm:ss.SSS})\t%highlight([%-5level])\t%cyan(%-65(%class{35}.%method[%line])):\t%message%n%red(%xException{10})</pattern>
+	    </encoder>
+  	</appender>
+	<logger name="org.springframework" level="info" />
+	<logger name="org.springframework.beans" level="info" />
+	<logger name="org.springframework.data.hadoop" level="info" />
+
+	<root level="info">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration> 

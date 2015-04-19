@@ -10,7 +10,6 @@
 	<modules>
 		<module>spring-boot-examples</module>
 		<module>spring-io-examples</module>
-
 		<module>spring-data-cassandra-examples</module>
 	</modules>
 </project>

@@ -11,15 +11,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cassandra.core.RetryPolicy;
+import org.springframework.cassandra.core.RowMapper;
 import org.springframework.cassandra.core.WriteOptions;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Truncate;
 import com.datastax.driver.core.querybuilder.Update;
 
@@ -54,6 +58,7 @@ public class ProductTest {
     @Test
     public void test() {
     	insert();
+    	select();
     	update();
     	delete();
     	truncate();
@@ -116,7 +121,46 @@ public class ProductTest {
 
     	logger.info("******************Insert case ended*******************");
     }
-    
+    public void select(){
+    	
+    	logger.info("total products {}",productRepository.count());
+    	
+    	//Query a table for multiple rows and map the results to a POJO.
+    	String cqlAll = "select * from product";
+
+    	List<Product> results = cassandraTemplate.select(cqlAll, Product.class);
+    	for (Product p : results) {
+    		logger.info(String.format("Found product with Name [%s] for id [%s]", p.getUpcId(), p.getUpcDsc()));
+    	}
+    	
+    	//Query a table for a single row and map the result to a POJO.
+    	String cqlOne = "select * from product where upc_id = 1";
+
+    	Product p = cassandraTemplate.selectOne(cqlOne, Product.class);
+    	logger.info(String.format("Found product with Name [%s] for id [%s]", p.getUpcId(), p.getUpcDsc()));
+    	
+    	//Query a table using the QueryBuilder.Select object that is part of the DataStax Java Driver.
+    	Select select = QueryBuilder.select().from("product");
+    	select.where(QueryBuilder.eq("upc_id", 1L));
+
+    	p = cassandraTemplate.selectOne(select, Product.class);
+    	logger.info(String.format("Found product with Name [%s] for id [%s]", p.getUpcId(), p.getUpcDsc()));
+    	
+    	//Then there is always the old fashioned way. You can write your own CQL statements, 
+    	
+    	cqlAll = "select * from product";
+    	results = cassandraTemplate.query(cqlAll, new RowMapper<Product>() {
+
+    		public Product mapRow(Row row, int rowNum) throws DriverException {
+    			Product p = new Product(row.getLong("upc_id"), row.getInt("cat_id"), row.getString("j4u_cat"),row.getString("upc_dsc"));
+    			return p;
+    		}
+    	});
+
+    	for (Product x : results) {
+        	logger.info(String.format("Found product with Name [%s] for id [%s]", x.getUpcId(), x.getUpcDsc()));
+    	}
+    }
     public void update(){
     	logger.info("******************Update case started*******************");
     	
@@ -140,7 +184,7 @@ public class ProductTest {
     	cassandraTemplate.execute(cql);
     	logger.info("updated record by cql {}",productDao.find(3L));
     	
-    	logger.info("******************Insert case ended*******************");    	
+    	logger.info("******************update case ended*******************");    	
     }
     
     public void delete(){

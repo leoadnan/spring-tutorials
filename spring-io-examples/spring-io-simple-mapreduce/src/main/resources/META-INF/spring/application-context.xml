@@ -9,14 +9,14 @@
 
 	<context:property-placeholder location="application-${ENV:default}.properties"/>
 
+<!-- 		fs.defaultFS=${spring.hadoop.fsUri} -->
 	<configuration>
-		fs.defaultFS=${spring.hadoop.fsUri}
 		mapreduce.framework.name=yarn
 		yarn.resourcemanager.address=${spring.hadoop.resourceManagerAddress}
 		mapreduce.jobhistory.address=${spring.hadoop.jobHistoryAddress}
 	</configuration>
 
-<job id="tweetCountJob"
+ 	<job id="tweetCountJob"
 		input-path="${hdfs.input.path}"
 		output-path="${hdfs.output.path}"
 		jar="file:#{systemProperties['user.dir']}/target/lib/tweets-count-mapreduce.jar"		

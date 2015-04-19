@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+	<!-- <hdp:configuration file-system-uri="${spring.hadoop.fsUri}"/> -->
+	
+	<hdp:file-system/>
+	
+	<!--<hdp:file-system id="webHdfsShell" uri="webhdfs://localhost:9000"/>-->	
+	
+	<hdp:resource-loader id="loader" file-system-ref="hadoopFs"/>
+	
+	<hdp:resource-loader id="loaderWithUser" user="emmd" uri="${spring.hadoop.fsUri}" />
+	
+	<hdp:script language="groovy" location="classpath:basic-script.groovy" run-at-startup="false"/>
+</beans:beans>
+
