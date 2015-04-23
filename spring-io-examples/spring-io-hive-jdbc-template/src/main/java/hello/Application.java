@@ -15,9 +15,21 @@
  */
 package hello;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.ql.io.orc.OrcFile;
+import org.apache.hadoop.hive.ql.io.orc.OrcStruct;
+import org.apache.hadoop.hive.ql.io.orc.Writer;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoUtils;
+import org.apache.hadoop.io.Writable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -46,6 +58,9 @@ public class Application implements CommandLineRunner{
 	@Autowired
 	private ResourceLoader resourceLoader;
 	
+	@Autowired
+	private org.apache.hadoop.conf.Configuration hadoopConfiguration;
+	
 //	@Autowired
 //	private HiveRunner hiveRunner;
 
@@ -73,17 +88,52 @@ public class Application implements CommandLineRunner{
 		List<String> list = jdbcTemplate.queryForList("show tables",String.class);
 		System.out.println("List of Tables :"+list);
 		
-		ScriptUtils.executeSqlScript(jdbcTemplate.getDataSource().getConnection(), resourceLoader.getResource("password-analysis.hql"));
+		/*OrcSerde serde = new OrcSerde();
 		
-		System.out.println("Password records: "+jdbcTemplate.queryForList("select count(*) from passwords",String.class));
+		//Define the struct which will represent each row in the ORC file
+	    String typeString = "struct<air_temp:double,station_id:string,lat:double,lon:double>";
+	    
+	    TypeInfo typeInfo = TypeInfoUtils.getTypeInfoFromTypeString(typeString);
+	    ObjectInspector oip = TypeInfoUtils.getStandardJavaObjectInspectorFromTypeInfo(typeInfo);
+	    List<Object> struct =new ArrayList<Object>(4);
+        struct.add(0, new Double(1.1));
+        struct.add(1, "1");
+        struct.add(2, new Double(1.111));
+        struct.add(3, new Double(2.222));
+	    
+        Writable row = serde.serialize(struct, oip);*/
+        
+		ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector(String.class,ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
 		
-		List<Map<String, Object>> results = jdbcTemplate.queryForList("select * from grpshell");
-		System.out.println("Group Shell Results: ");
-		for (Map<String, Object> r : results) {
-			System.out.println(r.get("grpshell.shell") + " : " + r.get("grpshell.count"));
+		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/orc_1.orc"),
+				OrcFile.writerOptions(hadoopConfiguration).inspector(inspector).stripeSize(1048576/2).bufferSize(1048577).version(OrcFile.Version.V_0_12));
+		
+		// even OrcStruct is public, its constructor and setFieldValue method are not.
+		Class<?> c = Class.forName("org.apache.hadoop.hive.ql.io.orc.OrcStruct");
+		Constructor<?> ctor = c.getDeclaredConstructor(int.class);
+		ctor.setAccessible(true);
+		Method setFieldValue = c.getDeclaredMethod("setFieldValue", int.class, Object.class);
+		setFieldValue.setAccessible(true);
+
+		for (int j = 0; j < 5; j++) {
+			OrcStruct orcRow = (OrcStruct) ctor.newInstance(8);
+			for (int i = 0; i < 8; i++)
+				setFieldValue.invoke(orcRow, i, "AAA" + j + "BBB" + i);
+			writer.addRow(orcRow);
 		}
+		writer.close();
+
+//		ScriptUtils.executeSqlScript(jdbcTemplate.getDataSource().getConnection(), resourceLoader.getResource("password-analysis.hql"));
 		
-		System.out.println("Hive Application Completed");
+//		System.out.println("Password records: "+jdbcTemplate.queryForList("select count(*) from passwords",String.class));
+		
+//		List<Map<String, Object>> results = jdbcTemplate.queryForList("select * from grpshell");
+//		System.out.println("Group Shell Results: ");
+//		for (Map<String, Object> r : results) {
+//			System.out.println(r.get("grpshell.shell") + " : " + r.get("grpshell.count"));
+//		}
+		
+//		System.out.println("Hive Application Completed");
     }
 /*
 	public void run(String... strings) throws Exception {
