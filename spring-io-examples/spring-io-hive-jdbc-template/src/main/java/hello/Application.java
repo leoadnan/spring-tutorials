@@ -20,8 +20,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.OrcSerde;
 import org.apache.hadoop.hive.ql.io.orc.OrcStruct;
@@ -62,6 +66,9 @@ public class Application implements CommandLineRunner{
 	@Autowired
 	private org.apache.hadoop.conf.Configuration hadoopConfiguration;
 	
+	@Autowired
+	FileSystem hadoopFs;
+	
 //	@Autowired
 //	private HiveRunner hiveRunner;
 
@@ -78,6 +85,16 @@ public class Application implements CommandLineRunner{
 //        System.out.println("Script ran successfully..");
 
     }
+    
+    
+    static class MyRecord {
+        int store_id;
+        String store_cd;
+        MyRecord(int store_id,  String store_cd) {
+          this.store_id = store_id;
+          this.store_cd = store_cd;
+        }
+      }
     
     public void run(String... strings) throws Exception{
     	System.out.println("Run method  ...");
@@ -106,29 +123,56 @@ public class Application implements CommandLineRunner{
         
 		
 		
-		ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector(String.class,ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
+//		Writer writer = OrcFile.createWriter(testFilePath,
+//                OrcFile.writerOptions(conf)
+//                .inspector(inspector)
+//                .stripeSize(1000)
+//                .compress(CompressionKind.SNAPPY)
+//                .bufferSize(100));
+
+		ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector
+		          (MyRecord.class, ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
 		
-//		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/store.orc"),
-//				OrcFile.writerOptions(hadoopConfiguration).inspector(inspector).stripeSize(1048576/2).bufferSize(1048577).version(OrcFile.Version.V_0_12));
+		hadoopConfiguration.set(HiveConf.ConfVars.HIVE_ORC_ENCODING_STRATEGY.varname, "COMPRESSION");
+		Writer writer = OrcFile.createWriter(hadoopFs, new Path("/user/aahmed/store.orc"), hadoopConfiguration, inspector,
+		        100000, CompressionKind.SNAPPY, 10000, 1000);
+		Random r1 = new Random(1);
 		
-		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/store.orc"),OrcFile.writerOptions(hadoopConfiguration).inspector(inspector));
+		String[] words = new String[]{"It", "was", "the", "best", "of", "times,",
+		        "it", "was", "the", "worst", "of", "times,", "it", "was", "the", "age",
+		        "of", "wisdom,", "it", "was", "the", "age", "of", "foolishness,", "it",
+		        "was", "the", "epoch", "of", "belief,", "it", "was", "the", "epoch",
+		        "of", "incredulity,", "it", "was", "the", "season", "of", "Light,",
+		        "it", "was", "the", "season", "of", "Darkness,", "it", "was", "the",
+		        "spring", "of", "hope,", "it", "was", "the", "winter", "of", "despair,",
+		        "we", "had", "everything", "before", "us,", "we", "had", "nothing",
+		        "before", "us,", "we", "were", "all", "going", "direct", "to",
+		        "Heaven,", "we", "were", "all", "going", "direct", "the", "other",
+		        "way"};
+		for(int i=0; i < 21000; ++i) {
+		      writer.addRow(new MyRecord(r1.nextInt(), words[r1.nextInt(words.length)]));
+		    }
 		
-		/*OrcSerde serde = new OrcSerde();
+		/*ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector(String.class,ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
+		
+		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/store.orc"),
+				OrcFile.writerOptions(hadoopConfiguration).inspector(inspector).stripeSize(1048576/2).bufferSize(1048577).version(OrcFile.Version.V_0_12));
+
+		OrcSerde serde = new OrcSerde();
 		
 		//Define the struct which will represent each row in the ORC file
-	    String typeString = "struct<store_id:int,store_cd:string,store_nm:string,district_id:int>";
+	    String typeString = "struct<store_id:int,store_cd:string>";
 	    
 	    TypeInfo typeInfo = TypeInfoUtils.getTypeInfoFromTypeString(typeString);
 	    ObjectInspector oip = TypeInfoUtils.getStandardJavaObjectInspectorFromTypeInfo(typeInfo);
 	    List<Object> struct =new ArrayList<Object>(4);
         struct.add(0, new Integer(1));
         struct.add(1, "store_cd");
-        struct.add(2, "store_nm");
-        struct.add(3, new Integer(1));
 	    
         Writable row = serde.serialize(struct, oip);
         writer.addRow(row);*/
         
+        /*
 		
 		Class<?> c = Class.forName("org.apache.hadoop.hive.ql.io.orc.OrcStruct");
 		Constructor<?> ctor = c.getDeclaredConstructor(int.class);
@@ -138,7 +182,7 @@ public class Application implements CommandLineRunner{
 
 		OrcStruct orcRow = (OrcStruct) ctor.newInstance(1);
 		setFieldValue.invoke(orcRow, new Integer(0),"One");
-		writer.addRow(orcRow);
+		writer.addRow(orcRow);*/
 		
 		
 		

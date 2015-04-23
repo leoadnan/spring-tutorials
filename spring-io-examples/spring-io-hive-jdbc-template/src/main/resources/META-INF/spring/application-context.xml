@@ -26,6 +26,8 @@
 		mapreduce.framework.name=yarn
 		mapreduce.jobhistory.address=${hd.jh}
 	</configuration>
+	<file-system/>
+	
 	<!-- 
 	<hive-client-factory  id="hiveClientFactory" host="${hive.host}" port="${hive.port}"  />
 	
