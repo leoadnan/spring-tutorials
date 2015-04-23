@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
+import org.apache.hadoop.hive.ql.io.orc.OrcSerde;
 import org.apache.hadoop.hive.ql.io.orc.OrcStruct;
 import org.apache.hadoop.hive.ql.io.orc.Writer;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
@@ -103,13 +104,46 @@ public class Application implements CommandLineRunner{
 	    
         Writable row = serde.serialize(struct, oip);*/
         
+		
+		
 		ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector(String.class,ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
 		
-		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/orc_1.orc"),
-				OrcFile.writerOptions(hadoopConfiguration).inspector(inspector).stripeSize(1048576/2).bufferSize(1048577).version(OrcFile.Version.V_0_12));
+//		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/store.orc"),
+//				OrcFile.writerOptions(hadoopConfiguration).inspector(inspector).stripeSize(1048576/2).bufferSize(1048577).version(OrcFile.Version.V_0_12));
+		
+		Writer writer = OrcFile.createWriter(new Path("/user/aahmed/store.orc"),OrcFile.writerOptions(hadoopConfiguration).inspector(inspector));
+		
+		/*OrcSerde serde = new OrcSerde();
+		
+		//Define the struct which will represent each row in the ORC file
+	    String typeString = "struct<store_id:int,store_cd:string,store_nm:string,district_id:int>";
+	    
+	    TypeInfo typeInfo = TypeInfoUtils.getTypeInfoFromTypeString(typeString);
+	    ObjectInspector oip = TypeInfoUtils.getStandardJavaObjectInspectorFromTypeInfo(typeInfo);
+	    List<Object> struct =new ArrayList<Object>(4);
+        struct.add(0, new Integer(1));
+        struct.add(1, "store_cd");
+        struct.add(2, "store_nm");
+        struct.add(3, new Integer(1));
+	    
+        Writable row = serde.serialize(struct, oip);
+        writer.addRow(row);*/
+        
+		
+		Class<?> c = Class.forName("org.apache.hadoop.hive.ql.io.orc.OrcStruct");
+		Constructor<?> ctor = c.getDeclaredConstructor(int.class);
+		ctor.setAccessible(true);
+		Method setFieldValue = c.getDeclaredMethod("setFieldValue", int.class, Object.class);
+		setFieldValue.setAccessible(true);
+
+		OrcStruct orcRow = (OrcStruct) ctor.newInstance(1);
+		setFieldValue.invoke(orcRow, new Integer(0),"One");
+		writer.addRow(orcRow);
+		
+		
 		
 		// even OrcStruct is public, its constructor and setFieldValue method are not.
-		Class<?> c = Class.forName("org.apache.hadoop.hive.ql.io.orc.OrcStruct");
+		/*Class<?> c = Class.forName("org.apache.hadoop.hive.ql.io.orc.OrcStruct");
 		Constructor<?> ctor = c.getDeclaredConstructor(int.class);
 		ctor.setAccessible(true);
 		Method setFieldValue = c.getDeclaredMethod("setFieldValue", int.class, Object.class);
@@ -120,9 +154,11 @@ public class Application implements CommandLineRunner{
 			for (int i = 0; i < 8; i++)
 				setFieldValue.invoke(orcRow, i, "AAA" + j + "BBB" + i);
 			writer.addRow(orcRow);
-		}
+		}*/
 		writer.close();
 
+		
+		jdbcOperations.execute("LOAD DATA INPATH '/user/aahmed/store.orc' OVERWRITE INTO TABLE emmd_hive.store_orc");
 //		ScriptUtils.executeSqlScript(jdbcTemplate.getDataSource().getConnection(), resourceLoader.getResource("password-analysis.hql"));
 		
 //		System.out.println("Password records: "+jdbcTemplate.queryForList("select count(*) from passwords",String.class));
