@@ -45,6 +45,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.hadoop.hive.HiveRunner;
+import org.springframework.data.hadoop.hive.HiveTemplate;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -70,6 +71,8 @@ public class Application implements CommandLineRunner{
 	FileSystem hadoopFs;
 	
 //	@Autowired
+//	HiveTemplate hiveTemplate;
+//	@Autowired
 //	private HiveRunner hiveRunner;
 
 	@Value("${tweets.input}")
@@ -91,6 +94,15 @@ public class Application implements CommandLineRunner{
         int store_id;
         String store_cd;
         MyRecord(int store_id,  String store_cd) {
+          this.store_id = store_id;
+          this.store_cd = store_cd;
+        }
+      }
+    
+    static class Store {
+        Integer store_id;
+        String store_cd;
+        Store(Integer store_id,  String store_cd) {
           this.store_id = store_id;
           this.store_cd = store_cd;
         }
@@ -131,6 +143,23 @@ public class Application implements CommandLineRunner{
 //                .bufferSize(100));
 
 		ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector
+		          (Store.class, ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
+		
+		hadoopConfiguration.set(HiveConf.ConfVars.HIVE_ORC_ENCODING_STRATEGY.varname, "COMPRESSION");
+		Writer writer = OrcFile.createWriter(hadoopFs, new Path("/user/aahmed/store"+System.currentTimeMillis()+".orc"), hadoopConfiguration, inspector,
+		        100000, CompressionKind.SNAPPY, 10000, 1000);
+		Store s1 = new Store(new Integer(1), "one");
+		Store s2 = new Store(new Integer(2), "two");
+		Store s3 = new Store(new Integer(3), "three");
+		Store s4 = new Store(new Integer(4), "four");
+		Store s5 = new Store(new Integer(5), "five");
+		writer.addRow(s1);
+		writer.addRow(s2);
+		writer.addRow(s3);
+		writer.addRow(s4);
+		writer.addRow(s5);
+		
+/*		ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector
 		          (MyRecord.class, ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
 		
 		hadoopConfiguration.set(HiveConf.ConfVars.HIVE_ORC_ENCODING_STRATEGY.varname, "COMPRESSION");
@@ -151,7 +180,7 @@ public class Application implements CommandLineRunner{
 		        "way"};
 		for(int i=0; i < 21000; ++i) {
 		      writer.addRow(new MyRecord(r1.nextInt(), words[r1.nextInt(words.length)]));
-		    }
+		    }*/
 		
 		/*ObjectInspector inspector = ObjectInspectorFactory.getReflectionObjectInspector(String.class,ObjectInspectorFactory.ObjectInspectorOptions.JAVA);
 		
@@ -201,8 +230,8 @@ public class Application implements CommandLineRunner{
 		}*/
 		writer.close();
 
-		
-		jdbcOperations.execute("LOAD DATA INPATH '/user/aahmed/store.orc' OVERWRITE INTO TABLE emmd_hive.store_orc");
+//		jdbcOperations.execute("LOAD DATA INPATH '/user/aahmed/store.orc' OVERWRITE INTO TABLE emmd_hive.store_orc");
+
 //		ScriptUtils.executeSqlScript(jdbcTemplate.getDataSource().getConnection(), resourceLoader.getResource("password-analysis.hql"));
 		
 //		System.out.println("Password records: "+jdbcTemplate.queryForList("select count(*) from passwords",String.class));
