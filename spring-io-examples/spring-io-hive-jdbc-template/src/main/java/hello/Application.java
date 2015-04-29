@@ -70,8 +70,9 @@ public class Application implements CommandLineRunner{
 	@Autowired
 	FileSystem hadoopFs;
 	
-//	@Autowired
-//	HiveTemplate hiveTemplate;
+	@Autowired
+	private HiveTemplate hiveTemplate;
+
 //	@Autowired
 //	private HiveRunner hiveRunner;
 
@@ -118,6 +119,12 @@ public class Application implements CommandLineRunner{
 		List<String> list = jdbcTemplate.queryForList("show tables",String.class);
 		System.out.println("List of Tables :"+list);
 		
+		
+//		System.out.println(hiveTemplate.queryForLong("select count(*) from books;"));
+
+//		List<String> tables = hiveTemplate.query("show tables");
+//	    System.out.println("tables size: " + tables.size());
+
 		/*OrcSerde serde = new OrcSerde();
 		
 		//Define the struct which will represent each row in the ORC file

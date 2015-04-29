@@ -30,11 +30,15 @@
 	</configuration>
 	<file-system/>
 	
-	<!-- 
-	<hive-client-factory  id="hiveClientFactory" host="${hive.host}" port="${hive.port}"  />
-	
-	<hive-runner  id="hiveRunner" run-at-startup="false"  hive-client-factory-ref="hiveClientFactory">
+	<hive-client-factory id="hiveClientFactory" host="${hive.host}" port="${hive.port}">
+		<!-- <hdp:script>
+			ADD JARS /usr/lib/hive/lib/books.jar;
+		</hdp:script> -->
+	</hive-client-factory>
+
+	<hive-template id="hiveTemplate" />
+
+	<!-- <hive-runner  id="hiveRunner" run-at-startup="false"  hive-client-factory-ref="hiveClientFactory">
 		<script location="password-analysis.hql" />			
 	</hive-runner>  -->
-	
 </beans:beans>
